@@ -16,6 +16,7 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -70,6 +71,23 @@ export default buildConfig({
   plugins: [
     ...plugins,
     // storage-adapter-placeholder
+    s3Storage({
+      collections: {
+        'media': {
+          prefix: 'media',
+        },
+      },
+      bucket: process.env.S3_BUCKET || '',
+          config: {
+            credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || '',
+        endpoint: process.env.S3_ENDPOINT || '',
+        forcePathStyle: true,
+      },
+    }),
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
